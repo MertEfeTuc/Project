@@ -1,13 +1,14 @@
 import personel
 
 class doktor(personel.Personel):
-    def __init__(self,uzmanlik,deneyim_yili,hastane):
-        super().__init__(personel.personel_no, personel.ad, personel.soyad, personel.departman, personel.maas)
+    def __init__(self,personel_no, ad, soyad, departman, maas, uzmanlik, deneyim_yili, hastane):
+        super().__init__(personel_no, ad, soyad, departman, maas)
         self.__uzmanlik = uzmanlik
         self.__deneyim_yili = deneyim_yili
         self.__hastane = hastane
     def __str__(self):
-        return f"{self.__uzmanlik},{self.__deneyim_yili},{self.__hastane}"
+        parent_str = super().__str__()
+        return f"{parent_str},{self.__uzmanlik},{self.__deneyim_yili},{self.__hastane}"
     #Getter methods
     def uzmanlik_get(self):
         return self.__uzmanlik
@@ -26,4 +27,6 @@ class doktor(personel.Personel):
 
     # Method for raises in maas value
     def maas_attir(self, value):
-        self.__maas *= value
+        current_maas = self.maas_get()
+        new_maas = current_maas * value
+        self.maas_set(new_maas)
