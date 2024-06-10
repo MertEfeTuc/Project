@@ -1,32 +1,43 @@
-import personel
 
-class doktor(personel.Personel):
-    def __init__(self,personel_no, ad, soyad, departman, maas, uzmanlik, deneyim_yili, hastane):
-        super().__init__(personel_no, ad, soyad, departman, maas)
-        self.__uzmanlik = uzmanlik
-        self.__deneyim_yili = deneyim_yili
-        self.__hastane = hastane
+class Personel:
+    def __init__(self ,personel_no ,ad ,soyad ,departman ,maas):
+        self.__personal_no = personel_no
+        self.__ad = ad
+        self.__soyad = soyad
+        self.__departman = departman
+        self.__maas = maas
+    # STR method
     def __str__(self):
-        parent_str = super().__str__()
-        return f"{parent_str},{self.__uzmanlik},{self.__deneyim_yili},{self.__hastane}"
-    #Getter methods
-    def uzmanlik_get(self):
-        return self.__uzmanlik
-    def deneyim_get(self):
-        return self.__deneyim_yili
-    def hastane_get(self):
-        return self.__hastane
+        return f"{self.__personal_no},{self.__ad},{self.__soyad},{self.__departman},{self.__maas}"
 
     # Setter methods
-    def uzmanlik_set(self,uz):
-        self.__uzmanlik =  uz
-    def deneyim_set(self,de):
-        self.__deneyim_yili = de
-    def hastane_set(self,ha):
-        self.__hastane = ha
+    def no_set(self ,no):
+        self.__personal_no = no
+    def ad_set(self ,ad):
+        self.__ad = ad
+    def soyad_set(self ,soyad):
+        self.__soyad = soyad
+    def dep_set(self ,depart):
+        self.__departman = depart
+    def maas_set(self ,maas):
+        self.__maas = maas
 
-    # Method for raises in maas value
-    def maas_attir(self, value):
-        current_maas = self.maas_get()
-        new_maas = current_maas * value
-        self.maas_set(new_maas)
+    # Getter methods
+    def no_get(self):
+        return self.__personal_no
+    def ad_get(self):
+        return self.__ad
+    def soyad_get(self):
+        return self.__soyad
+    def dep_get(self):
+        return self.__departman
+    def maas_get(self):
+        return self.__maas
+
+
+
+
+
+
+
+

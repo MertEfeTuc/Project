@@ -33,7 +33,7 @@ class hemsire(personel.Personel):
         self.__hastane = ha
 
     # Method for raises in maas value
-    def maas_attir(self, value):
+    def maas_arttir(self, value):
         current_maas = self.maas_get()
         new_maas = current_maas * value
         self.maas_set(new_maas)
