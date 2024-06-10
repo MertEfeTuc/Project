@@ -29,58 +29,6 @@ personel_list = [yeniPersonel1, yeniPersonel2, doktor1, doktor2, doktor3, hemsir
 hasta_list = [hasta1, hasta2, hasta3]
 
 personel_data = {
-    'id': [p.no_get() for p in personel_list],
-    'ad': [p.ad_get() for p in personel_list],
-    'soyad': [p.soyad_get() for p in personel_list],
-    'departman': [p.dep_get() for p in personel_list],
-    'maas': [p.maas_get() for p in personel_list],
-    'uzmanlik': [getattr(p, 'uzmanlik_get', lambda: None)() for p in personel_list],
-    'deneyim_yili': [getattr(p, 'deneyim_yili_get', lambda: None)() for p in personel_list],
-    'hastane': [getattr(p, 'hastane_get', lambda: None)() for p in personel_list]
-}
-
-hasta_data = {
-    'id': [h.no_get() for h in hasta_list],
-    'ad': [h.ad_get() for h in hasta_list],
-    'soyad': [h.soyad_get() for h in hasta_list],
-    'dogum_tarihi': [h.dog_get() for h in hasta_list],
-    'hastalik': [h.hastalik_get() for h in hasta_list],
-    'tedavi': [h.tedavi_get() for h in hasta_list]
-}
-
-personel_df = pd.DataFrame(personel_data)
-hasta_df = pd.DataFrame(hasta_data)
-
-# Boş olan değişken değerleri için 0 atama
-personel_df.fillna(0, inplace=True)
-personel_df = personel_df.infer_objects()
-
-# Doktorları uzmanlık alanlarına göre gruplandırarak toplam sayısını hesaplama
-doktor_gruplari = personel_df[personel_df['uzmanlik'] != 0].groupby('uzmanlik').size()
-print("Doktor grupları:\n", doktor_gruplari)
-
-# 5 yıldan fazla deneyime sahip doktorların toplam sayısını bulma
-deneyimli_doktorlar = personel_df[(personel_df['deneyim_yili'] > 5) & (personel_df['deneyim_yili'] != 0)]
-print("5 yıldan fazla deneyime sahip doktor sayısı:", deneyimli_doktorlar.shape[0])
-
-# Hasta adına göre DataFrame’i alfabetik olarak sıralama
-sorted_hasta_df = hasta_df.sort_values(by='ad')
-print("Alfabetik sıraya göre hastalar:\n", sorted_hasta_df)
-
-# Maaşı 7000 TL üzerinde olan personelleri bulma
-maasi_yuksek_personeller = personel_df[personel_df['maas'] > 7000]
-print("Maaşı 7000 TL üzerinde olan personeller:\n", maasi_yuksek_personeller)
-
-# Doğum tarihi 1990 ve sonrası olan hastaları gösterme
-dogum_tarihi_1990_sonrasi = hasta_df[pd.to_datetime(hasta_df['dogum_tarihi'], format='%d.%m.%Y') >= '1990-01-01']
-print("Doğum tarihi 1990 ve sonrası olan hastalar:\n", dogum_tarihi_1990_sonrasi)
-
-# Yeni DataFrame oluşturma
-yeni_df = pd.concat([personel_df[['ad', 'soyad', 'departman', 'maas', 'uzmanlik', 'deneyim_yili']],
-                     hasta_df[['ad', 'soyad', 'hastalik', 'tedavi']].rename(columns={'hastalik': 'departman', 'tedavi': 'maas'})],
-                    ignore_index=True)
-print("Yeni DataFrame:\n", yeni_df)
-personel_data = {
     'personel_no': [p.no_get() for p in personel_list],
     'ad': [p.ad_get() for p in personel_list],
     'soyad': [p.soyad_get() for p in personel_list],
@@ -119,12 +67,37 @@ hasta_df = pd.DataFrame(hasta_data)
 
 # Boş olan değişken değerleri için 0 atama
 personel_df.fillna(0, inplace=True)
-hasta_df.fillna(0, inplace=True)
+personel_df = personel_df.infer_objects()
+
+# Doktorları uzmanlık alanlarına göre gruplandırarak toplam sayısını hesaplama
+doktor_gruplari = personel_df[personel_df['uzmanlik'] != 0].groupby('uzmanlik').size()
+print("Doktor grupları:\n", doktor_gruplari)
+
+# 5 yıldan fazla deneyime sahip doktorların toplam sayısını bulma
+deneyimli_doktorlar = personel_df[(personel_df['deneyim_yili'] > 5) & (personel_df['deneyim_yili'] != 0)]
+print("5 yıldan fazla deneyime sahip doktor sayısı:", deneyimli_doktorlar.shape[0])
+
+# Hasta adına göre DataFrame’i alfabetik olarak sıralama
+sorted_hasta_df = hasta_df.sort_values(by='ad')
+print("Alfabetik sıraya göre hastalar:\n", sorted_hasta_df)
+
+# Maaşı 7000 TL üzerinde olan personelleri bulma
+maasi_yuksek_personeller = personel_df[personel_df['maas'] > 7000]
+print("Maaşı 7000 TL üzerinde olan personeller:\n", maasi_yuksek_personeller)
+
+# Doğum tarihi 1990 ve sonrası olan hastaları gösterme
+dogum_tarihi_1990_sonrasi = hasta_df[pd.to_datetime(hasta_df['dogum_tarihi'], format='%d.%m.%Y') >= '1990-01-01']
+print("Doğum tarihi 1990 ve sonrası olan hastalar:\n", dogum_tarihi_1990_sonrasi)
+
 
 # Yeni DataFrame oluşturma
 yeni_df = pd.concat([personel_df, hasta_df], ignore_index=True)
 
 print("Yeni DataFrame:\n", yeni_df)
+
+yeni_df_filtrelenmis = yeni_df[['ad', 'soyad', 'departman', 'maas', 'uzmanlik', 'deneyim_yili', 'hastalik', 'tedavi']]
+print("Yeni DataFrame (filtrelenmiş):\n", yeni_df_filtrelenmis)
+
 
 root = tk.Tk()
 root.title("Veri Görselleştirme")
@@ -132,15 +105,15 @@ root.title("Veri Görselleştirme")
 
 # DataFrame'i gösterecek olan Treeview bileşeni
 tree = ttk.Treeview(root)
-tree["columns"] = tuple(yeni_df.columns)
+tree["columns"] = tuple(yeni_df_filtrelenmis.columns)
 tree["show"] = "headings"
 
 # Sütun başlıklarını ayarla
-for column in yeni_df.columns:
+for column in yeni_df_filtrelenmis.columns:
     tree.heading(column, text=column)
 
 # Verileri eklemek için tree'e döngü yapısı
-for index, row in yeni_df.iterrows():
+for index, row in yeni_df_filtrelenmis.iterrows():
     tree.insert("", "end", values=tuple(row))
 
 # Scrollbar ekleyerek tree'i yerleştir
